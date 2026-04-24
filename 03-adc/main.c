@@ -47,52 +47,12 @@ void help_callback(const char* args){
     }
 }
 
-void mem(uint32_t addr)
-{
-    uint32_t* ptr    = (uint32_t*)addr; 
-    uint32_t  value  = *ptr;
+void mem_callback(const char* args){
+    uint32_t addr;
+    sscanf(args, "%u", &addr);
+    printf("%s",addr);
 
-    printf("mem[0x%08X] = 0x%08X\n", addr, value);
-}
 
-void wmem(uint32_t addr, uint32_t value)
-{
-    *(volatile uint32_t*)addr = value;
-
-    printf("wmem[0x%08X] <- 0x%08X done\n", addr, value);
-}
-
-void mem_callback(const char* args)
-{
-    if (args == NULL || args[0] == '\0')
-    {
-        printf("error: usage: mem <hex_address>\n");
-        return;
-    }
-
-    
-    uint32_t address = (uint32_t)strtoul(args, NULL, 16);
-
-    
-    mem(address);
-}
-
-void wmem_callback(const char* args)
-{
-    if (args == NULL || args[0] == '\0')
-    {
-        printf("error: usage: wmem <hex_addr> <hex_value>\n");
-        return;
-    }
-
-    char* end_ptr;
-    
-    uint32_t addr  = (uint32_t)strtoul(args,    &end_ptr, 16);
-
-    uint32_t value = (uint32_t)strtoul(end_ptr, NULL,     16);
-
-    wmem(addr, value);
-    led_task_state_set(LED_STATE_BLINK);
 }
 
 int main(){
@@ -108,7 +68,6 @@ int main(){
         {"set_period", led_blink_set_period_ms_callback, "set period of blinking"},
         {"help", help_callback, "get help"},
         {"mem", mem_callback, "get mem"},
-        {"wmem", wmem_callback, "get mem"},
         {NULL, NULL, NULL},
     };
 
