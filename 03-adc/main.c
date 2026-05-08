@@ -6,6 +6,7 @@
 #include "stdio-task/stdio-task.h"
 #include "protocol-task/protocol-task.h"
 #include "led-task/led-task.h"
+#include "adc-task/adc-task.h"
 #include "stdint.h" 
 
 //onst uint LED_PIN = 25;
@@ -51,13 +52,22 @@ void mem_callback(const char* args){
     uint32_t addr;
     sscanf(args, "%u", &addr);
     printf("%s",addr);
+}
 
+void adc_callback(const char* args){
+    float voltage = get_adc_voltage();
+    printf("%f\n", voltage);
+}
 
+void temp_callback(const char* args){
+    float temp_C = get_adc_temp();
+    printf("%f\n", temp_C);
 }
 
 int main(){
     stdio_init_all();
     led_task_init();
+    adc_task_init();
 
     api_t device_api[] =
     {
@@ -68,6 +78,8 @@ int main(){
         {"set_period", led_blink_set_period_ms_callback, "set period of blinking"},
         {"help", help_callback, "get help"},
         {"mem", mem_callback, "get mem"},
+        {"get_adc", adc_callback, "get adc"},
+        {"get_temp", temp_callback, "get temp"},
         {NULL, NULL, NULL},
     };
 
