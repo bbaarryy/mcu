@@ -9,6 +9,9 @@
 #define ADC_CHANEL_NUMBER 0
 #define ADC_CHANEL_INNERTEMPRETURE 4
 
+adc_task_state_t adc_state = ADC_TASK_STATE_IDLE;
+uint64_t time_stamp;
+uint64_t ADC_TASK_MEAS_PERIOD_US = 100000;
 
 void adc_task_init()
 {
@@ -32,4 +35,30 @@ float get_adc_temp()
     float voltage_V = voltage_counts * 3.3f/4096;
     float temp_C = 27.0f - (voltage_V - 0.706f) / 0.001721f;
     return temp_C;
+}
+
+void adc_task_set_state(adc_task_state_t state)
+{
+    adc_state = state;
+}
+
+void adc_task_handle()
+{
+    switch (adc_state)
+    {
+    case ADC_TASK_STATE_IDLE:
+        /* code */
+        break;
+    case ADC_TASK_STATE_RUN:
+        if (time_us_64() > time_stamp)
+        {
+	        time_stamp = time_us_64() + (ADC_TASK_MEAS_PERIOD_US / 2);
+            float temp_C = get_adc_temp();
+            float voltage_V = get_adc_voltage();
+            printf("%f %f\n", voltage_V, temp_C);
+        }
+        break;
+    default:
+        break;
+    }
 }

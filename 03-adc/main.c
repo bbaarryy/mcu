@@ -64,6 +64,16 @@ void temp_callback(const char* args){
     printf("%f\n", temp_C);
 }
 
+void tm_start_callback(const char* args)
+{
+    adc_task_set_state(ADC_TASK_STATE_RUN);
+}
+
+void tm_stop_callback(const char* args)
+{
+    adc_task_set_state(ADC_TASK_STATE_IDLE);
+}
+
 int main(){
     stdio_init_all();
     led_task_init();
@@ -80,6 +90,8 @@ int main(){
         {"mem", mem_callback, "get mem"},
         {"get_adc", adc_callback, "get adc"},
         {"get_temp", temp_callback, "get temp"},
+        {"tm_start", tm_start_callback, "get temp"},
+        {"tm_stop", tm_stop_callback, "get temp"},
         {NULL, NULL, NULL},
     };
 
@@ -93,5 +105,6 @@ int main(){
         }
 
         led_task_handle();
+        adc_task_handle();
     }
 }
